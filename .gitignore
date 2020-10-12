@@ -1,3 +1,5 @@
+# Ignore virtual environment
+venv/
 # Ignore temp output dir
 temp/
 # Ignore jetbrains files
