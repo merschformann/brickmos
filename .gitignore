@@ -1,0 +1,4 @@
+# Ignore temp output dir
+temp/
+# Ignore jetbrains files
+.idea/
