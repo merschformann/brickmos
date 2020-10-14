@@ -4,6 +4,7 @@ import cv2
 import math
 import os
 import sys
+from typing import Tuple
 import xml.etree.cElementTree as xmlET
 
 
@@ -24,9 +25,9 @@ class BrickColorStats:
         self.count = 0
 
 
-def closest_color(rgb, color_range, stats):
+def closest_color(rgb: Tuple[int, int, int], color_range: list, stats: dict) -> BrickColor:
     # Get rgb values of color while adhering to cv2 BGR representation
-    b, g, r = rgb
+    r, g, b = rgb
     # Assess euclidean distance of color to all brick colors given
     color_diffs = []
     for color in color_range:
@@ -47,7 +48,7 @@ def write_xml(filename, stats, spares_per_lot=5):
     Writes the necessary colored bricks collected in stats to a bricklink xml file.
     :param filename: The file to write to.
     :param stats: The stats to export.
-    :param round_to_tens: The number of spares to add per color/brick, just in case of loosing some.
+    :param spares_per_lot: The number of spares to add per color/brick, just in case of loosing some.
     """
     root = xmlET.Element("INVENTORY")
     for colorStat in stats.items():
@@ -84,10 +85,8 @@ if args.color_file == '':
 if not os.path.exists(args.image_file):
     print(f'Cannot find image file at {args.image_file}, exiting ...')
     sys.exit(-2)
-# Quick check for output dir presence
-if not os.path.exists(args.output_directory):
-    print(f'Invalid output directory at {args.output_directory}, exiting ...')
-    sys.exit(-3)
+# Create output directory, if it does not exist
+os.makedirs(args.output_directory, exist_ok=True)
 
 # Read color info - find colors here: https://www.bricklink.com/catalogColors.asp
 # Expected CSV-format (with header, integer RGB): red,green,blue;color-name,bricklink-color-id,bricklink-brick-type
@@ -116,7 +115,7 @@ image_lego = image_pixelated.copy()
 statistics = {}
 for i in range(image_lego.shape[0]):
     for j in range(image_lego.shape[1]):
-        image_lego[i, j] = closest_color(image_lego[i, j], colors, statistics).rgb[::-1]
+        image_lego[i, j] = closest_color(image_lego[i, j][::-1], colors, statistics).rgb[::-1]
 
 # Initialize output image
 image_output = cv2.resize(image_lego, (w_out, h_out), interpolation=cv2.INTER_NEAREST)
