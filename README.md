@@ -6,18 +6,44 @@ I wrote this for myself for a birthday present I worked on, but wanted to leave 
 
 (ltr: original image, pixelated image with original color, image with colors mapped to given Lego colors)
 
+#### Focus explanation & alternatives
+
+This is a rather simple script which worked well for me, as I went back and forth between my image editing tool and modifying the color pallet.
+I really like this continuous process of shaping the result while keeping colors/brick types and their prices under control.
+I even ended up replacing one 1x1 plate with a 1x1 tile, since the respective color was too expensive on bricklink.
+Furthermore, I was only interested in full 1x1 mosaics, similar to the Lego mosaic art product line.
+I ended up buying the frame parts also used for the Lego art frame (see [here](https://www.lego.com/de-de/campaigns/art/)), as it is extendable and easily wall-mountable. 
+
+If you are more interested in GUI application, different workflow or automatically chosen larger than 1x1 pixels, you may want to have a look at the following alternatives (if I forgot an alternative here, let me know):
+- Bricklink studio (see [here](https://www.bricklink.com/v3/studio/download.page), full-blown brick set designer with a mosaic feature)
+- PicToBrick (see [here](http://www.pictobrick.de/en/pictobrick.shtml), specifically made for brick mosaics)
+
 # Quickstart
 
-## Prerequisites
+### Prerequisites
 
 - Python (I used python 3.8)
   - opencv-python (the version I used is defined in _requirements.txt_)
 
-## Process an image
+### Process an image
 
 Convert an image by invoking the script as follows:
 
 `python mosaic/brickify.py data/iron-man-portrait.jpg --output_directory="temp"`
+
+Repeat the process while modifying the original image (change colors in areas not working well, change colors overall, etc.) and limiting / extending the colors (add useful ones, remove expensive ones) until you are satisfied with the outcome (and price ;) ).
+
+### Import parts to bricklink
+
+1. Login at [https://www.bricklink.com/](https://www.bricklink.com/)
+1. Go to __Want > Upload__ (see [here](https://www.bricklink.com/v2/wanted/upload.page))
+1. Choose _Upload BrickLink XML format
+1. Copy & paste (ctrl-a, ctrl-c, ctrl-v) the XML output of the tool into the window
+1. _Proceed to verify items_ and add all to a wishlist (please double-check the items, before ordering ;) ) 
+
+# Further information
+
+Find some further definitions below.
 
 ## Parameters
 
