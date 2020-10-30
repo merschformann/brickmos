@@ -12,9 +12,9 @@ This is a rather simple script which worked well for me, as I went back and fort
 I really like this continuous process of shaping the result while keeping colors/brick types and their prices under control.
 I even ended up replacing one 1x1 plate with a 1x1 tile, since the respective color was too expensive on bricklink.
 Furthermore, I was only interested in full 1x1 mosaics, similar to the Lego mosaic art product line.
-I ended up buying the frame parts also used for the Lego art frame (see [here](https://www.lego.com/de-de/campaigns/art/)), as it is extendable and easily wall-mountable. 
+I also ended up buying the frame parts used for the Lego art frame (see [here](https://www.lego.com/de-de/campaigns/art/)), as it is extendable and easily wall-mountable. 
 
-If you are more interested in GUI application, different workflow or automatically chosen larger than 1x1 pixels, you may want to have a look at the following alternatives (if I forgot an alternative here, let me know):
+However, if you are more interested in a GUI application, different workflow or automatically chosen larger than 1x1 pixels, you may want to have a look at the following alternatives (if I forgot an alternative here, let me know):
 - Bricklink studio (see [here](https://www.bricklink.com/v3/studio/download.page), full-blown brick set designer with a mosaic feature)
 - PicToBrick (see [here](http://www.pictobrick.de/en/pictobrick.shtml), specifically made for brick mosaics)
 
