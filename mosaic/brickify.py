@@ -47,6 +47,10 @@ def init_and_get_arguments():
                         help='the directory the output image and BOM is written to (default is current working dir)')
     parser.add_argument('--spares', type=int, default=0,
                         help='the number of spares to add per color/brick (bricklink), just in case of loosing some bricks')
+    parser.add_argument('--width', type=int, default=48,
+                        help='the width of the mosaic (default is 48)')
+    parser.add_argument('--height', type=int, default=48,
+                        help='the height of the mosaic (default is 48)')
     # Retrieve arguments
     args = parser.parse_args()
     # Use default color definition location, if not given
@@ -154,7 +158,7 @@ image_input = cv2.imread(args.image_file)
 # Get input size
 height, width = image_input.shape[:2]
 # Desired "pixelated" size
-w, h = (48, 48)
+w, h = (args.width, args.height)
 # Desired output size
 w_out, h_out = (1000, 1000)
 

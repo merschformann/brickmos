@@ -4,7 +4,7 @@ I wrote this for myself for a birthday present I worked on, but wanted to leave 
 
 ![process-steps](material/process-steps.svg)
 
-(ltr: original image, pixelated image with original color, image with colors mapped to given Lego colors)
+(ltr: original image, pixelated image with original color, image with colors mapped to given Lego colors; [image source](https://www.vincenthie.com/gallery/disney/ironmanportrait))
 
 #### Focus explanation & alternatives
 
@@ -56,6 +56,7 @@ Find a short explanation of the parameter arguments below.
 - color_file: the csv-file defining the brick-colors to be used (if not given, colors.csv at script location is attempted), see format description below
 - output_directory: the directory the output image and BOM is written to (default is current working directory)
 - spares: the number of spares to add per color/brick (in bricklink BOM), just in case of loosing some bricks
+- width/height: the width/height of the image in 1x1 bricks (default is 48x48 - same as current Lego art)
 
 ## Color definition
 
