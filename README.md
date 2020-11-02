@@ -37,7 +37,7 @@ Repeat the process while modifying the original image (change colors in areas no
 
 1. Login at [https://www.bricklink.com/](https://www.bricklink.com/)
 1. Go to __Want > Upload__ (see [here](https://www.bricklink.com/v2/wanted/upload.page))
-1. Choose _Upload BrickLink XML format
+1. Choose ___Upload BrickLink XML format___
 1. Copy & paste (ctrl-a, ctrl-c, ctrl-v) the XML output of the tool into the window
 1. _Proceed to verify items_ and add all to a wishlist (please double-check the items, before ordering ;) ) 
 
