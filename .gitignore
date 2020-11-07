@@ -4,3 +4,5 @@ venv/
 temp/
 # Ignore jetbrains files
 .idea/
+# Ignore vs-code files
+.vscode/

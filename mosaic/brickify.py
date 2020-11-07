@@ -125,6 +125,23 @@ def replace_with_brick_colors(img, brick_colors):
     return stats
 
 
+def add_grid(img, pixels, spacing):
+    line_frac = 0.002
+    line_width = int(round(min(line_frac * img.shape[0], line_frac * img.shape[1])))
+    for i in range(pixels[0] + 1):
+        if i % spacing[0] == 0:
+            x = int(round(float(i) / pixels[0] * img.shape[0]))
+            cv2.line(img,
+                (x, 0), (x, img.shape[0]),
+                (0, 0, 0), line_width)
+    for i in range(pixels[1] + 1):
+        if i % spacing[1] == 0:
+            y = int(round(float(i) / pixels[1] * img.shape[1]))
+            cv2.line(img,
+                (0, y), (img.shape[0], y),
+                (0, 0, 0), line_width)
+
+
 def write_xml(filename, stats, spares_per_lot=5):
     """
     Writes the necessary colored bricks collected in stats to a bricklink xml file.
@@ -171,6 +188,12 @@ statistics = replace_with_brick_colors(image_bricks, colors)
 
 # Initialize output image
 image_output = cv2.resize(image_bricks, (w_out, h_out), interpolation=cv2.INTER_NEAREST)
+
+# Add helper grid
+grid = True
+grid_spacing = 8, 8
+if grid:
+    add_grid(image_output, (w, h), grid_spacing)
 
 # Show some statistics
 print(f"Colors ({len(statistics)} colors, {sum([i.count for i in statistics.values()])} tiles):")
