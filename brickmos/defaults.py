@@ -1,4 +1,8 @@
-rgb;Bricklink Color Name;Bricklink Color ID;Bricklink Part ID
+def get_default_colors():
+    """
+    Returns the default colors as a CSV string.
+    """
+    return r"""rgb;Bricklink Color Name;Bricklink Color ID;Bricklink Part ID
 255,255,255;White;1;3024
 175,181,199;LightBluishGray;86;3024
 89,93,96;DarkBluishGray;85;3024
@@ -31,4 +35,4 @@ rgb;Bricklink Color Name;Bricklink Color ID;Bricklink Part ID
 95,38,131;DarkPurple;89;3024
 136,94,158;MediumLavender;157;3024
 200,112,128;DarkPink;47;3024
-255,187,255;BrightPink;104;3024
+255,187,255;BrightPink;104;3024"""

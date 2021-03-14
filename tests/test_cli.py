@@ -39,7 +39,7 @@ def hash_file(path):
 def test_main():
 
     # Check for update argument
-    parser = argparse.ArgumentParser(description="brick-mosaic golden file tests")
+    parser = argparse.ArgumentParser(description="brickmos golden file tests")
     parser.add_argument(
         "--update",
         dest="update",
@@ -49,23 +49,19 @@ def test_main():
     )
     args = parser.parse_args()
 
-    # Set some parameters
-    output_dir = str(pathlib.Path(__file__).parent.joinpath("./output").resolve())
-    data_dir = str(
-        pathlib.Path(__file__).parent.joinpath("./testdata").resolve(strict=True)
-    )
+    # Prepare paths
+    base_dir = pathlib.Path(__file__).parent.joinpath("..").resolve(strict=True)
+    script_path = str(base_dir.joinpath("run.py").resolve(strict=True))
+    output_dir = str(base_dir.joinpath("tests/output").resolve())
+    data_dir = str(base_dir.joinpath("tests/testdata").resolve(strict=True))
 
     # Prepare
+    os.chdir(base_dir)
     os.makedirs(output_dir, exist_ok=True)
     old_files = [f for f in os.listdir(output_dir)]
     for f in old_files:
         os.remove(os.path.join(output_dir, f))
-    script_path = str(
-        pathlib.Path(__file__)
-        .parent.joinpath("../mosaic/brickify.py")
-        .resolve(strict=True)
-    )
-    base = [sys.executable, script_path]
+    base_args = [sys.executable, script_path]
     CliTest = collections.namedtuple(
         "Test",
         [
@@ -101,7 +97,7 @@ def test_main():
     for test in tests:
 
         # Assemble command and arguments
-        cmd = [*base, *test.args]
+        cmd = [*base_args, *test.args]
         cmd.extend(
             [
                 "-o",
