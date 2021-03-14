@@ -7,7 +7,7 @@ parts can be ordered quite easily from bricklink (https://www.bricklink.com/).
 I wrote this for myself for a birthday present I worked on, but wanted to leave
 it here for others to re-use or as inspiration.
 
-![process-steps](material/process-steps.svg)
+![process-steps](https://raw.githubusercontent.com/merschformann/brickmos/main/material/process-steps.svg)
 
 (ltr: original image, pixelated image with original color, image with colors
 mapped to given Lego colors; [image source](https://www.vincenthie.com/gallery/disney/ironmanportrait))  
