@@ -5,14 +5,14 @@
 This is a simple tool for converting images to Lego mosaics such that their
 parts can be ordered quite easily from bricklink (https://www.bricklink.com/).
 I wrote this for myself for a birthday present I worked on, but wanted to leave
-it here for others to re-use or as inspiration. :)
+it here for others to re-use or as inspiration.
 
 ![process-steps](material/process-steps.svg)
 
 (ltr: original image, pixelated image with original color, image with colors
 mapped to given Lego colors; [image source](https://www.vincenthie.com/gallery/disney/ironmanportrait))  
 
-## Focus explanation & alternatives
+## Motivation & alternatives
 
 This is a rather simple script which worked well for me, as I went back and
 forth between my image editing tool and modifying the color pallet. I really
@@ -42,7 +42,7 @@ following alternatives (if I forgot an alternative here, let me know):
 
 Convert an image by invoking the script as follows:
 
-`python mosaic/brickify.py data/iron-man-portrait.jpg --output_directory="temp"`
+`python run.py data/iron-man-portrait.jpg --output_directory="temp"`
 
 Repeat the process while modifying the original image (change colors in areas
 not working well, change colors overall, etc.) and limiting / extending the
