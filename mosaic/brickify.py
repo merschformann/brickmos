@@ -90,6 +90,13 @@ def init_and_get_arguments():
         default="8x8",
         help=f"the size of a helper grid cell (default is 8x8 bricks, '{NO_GRID}' removes the grid)",
     )
+    parser.add_argument(
+        "--no_preview",
+        dest="no_preview",
+        action="store_true",
+        default=False,
+        help="indicates whether to skip immediately showing the images",
+    )
     # Retrieve arguments
     args = parser.parse_args()
     # Use default color definition location, if not given
@@ -289,12 +296,12 @@ def main():
     cv2.imwrite(os.path.join(args.output_directory, "3.output.jpg"), image_output)
 
     # Show images
-    cv2.imshow("Input", image_input)
-    cv2.imshow("Pixelated", image_pixelated)
-    cv2.imshow("Output", image_output)
-
-    # Wait for user to quit
-    cv2.waitKey(0)
+    if not args.no_preview:
+        cv2.imshow("Input", image_input)
+        cv2.imshow("Pixelated", image_pixelated)
+        cv2.imshow("Output", image_output)
+        # Wait for user to quit
+        cv2.waitKey(0)
 
 
 if __name__ == "__main__":

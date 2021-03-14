@@ -66,15 +66,15 @@ Find a short explanation of the parameter arguments below.
 
 #### Required arguments
 
-- `--image_file`: the path to the (original) image to process, can be a _.jpg_
-  or _.png_ file
+- `--image_file, -i`: the path to the (original) image to process, can be a
+  _.jpg_  or _.png_ file
 
 #### Optional arguments
 
 - `--color_file`: the csv-file defining the brick-colors to be used (if not
   given, colors.csv at script location is attempted), see format description
   below
-- `--output_directory`: the directory the output image and BOM is written to
+- `--output_directory, -o`: the directory the output image and BOM is written to
   (default is current working directory)
 - `--spares`: the number of spares to add per color/brick (in bricklink BOM),
   just in case of loosing some bricks
