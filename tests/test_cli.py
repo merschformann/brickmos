@@ -57,6 +57,9 @@ def test_main():
 
     # Prepare
     os.makedirs(output_dir, exist_ok=True)
+    old_files = [f for f in os.listdir(output_dir)]
+    for f in old_files:
+        os.remove(os.path.join(output_dir, f))
     script_path = str(
         pathlib.Path(__file__)
         .parent.joinpath("../mosaic/brickify.py")
@@ -70,6 +73,7 @@ def test_main():
             "golden_log",
             "golden_pixelated",
             "golden_output",
+            "golden_bricklink",
         ],
     )
 
@@ -89,6 +93,7 @@ def test_main():
             os.path.join(data_dir, "iron-man.jpg.golden.log"),
             os.path.join(data_dir, "iron-man.jpg.golden.pixelated.hash"),
             os.path.join(data_dir, "iron-man.jpg.golden.output.hash"),
+            os.path.join(data_dir, "iron-man.jpg.golden.bricklink.xml"),
         ),
     ]
 
@@ -100,7 +105,7 @@ def test_main():
         cmd.extend(
             [
                 "-o",
-                "output",
+                output_dir,
                 "--no_preview",
             ]
         )
@@ -147,6 +152,19 @@ def test_main():
             with open(test.golden_output, "r") as file:
                 expected = file.read()
             assert out_hash == expected
+
+        # Compare bricklink export
+        bricklink = ""
+        with open(os.path.join(output_dir, "bricklink.xml"), "r") as f:
+            bricklink = f.read()
+        if args.update:
+            with open(test.golden_bricklink, "w") as file:
+                file.write(bricklink)
+        else:
+            expected = ""
+            with open(test.golden_bricklink, "r") as file:
+                expected = file.read()
+            assert bricklink == expected
 
 
 if __name__ == "__main__":
