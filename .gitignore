@@ -1,6 +1,12 @@
-# Ignore virtual environment
-venv/
-# Ignore temp output dir
-temp/
-# Ignore jetbrains files
+# Ignore IDE files
 .idea/
+.vscode/
+
+# Ignore general python stuff
+venv/
+__pycache__/
+.pytest_cache/
+
+# Project specific
+temp/
+tests/output/

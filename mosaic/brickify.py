@@ -4,8 +4,16 @@ import cv2
 import math
 import os
 import sys
-from typing import Tuple
+from typing import Tuple, List
 import xml.etree.cElementTree as xmlET
+
+
+# ===> Constants
+
+NO_GRID = "none"  # Argument value for deactivating the helper grid
+
+
+# ===> Auxiliary classes
 
 
 class BrickColor:
@@ -33,43 +41,108 @@ class BrickColorStats:
         self.count = 0
 
 
+# ===> Argument handling
+
+
 def init_and_get_arguments():
     """
     Creates an argument parser, handles it and returns the prepared arguments.
     :return: The arguments.
     """
-    parser = argparse.ArgumentParser(description="'Mosaicify' an image using brick colors and export bill of material")
-    parser.add_argument('image_file', type=str, help='the image to process')
-    parser.add_argument('--color_file', type=str, default='',
-                        help='the csv-file defining the brick-colors to be used (if not given, colors.csv at script '
-                             'location is attempted)')
-    parser.add_argument('--output_directory', type=str, default='.',
-                        help='the directory the output image and BOM is written to (default is current working dir)')
-    parser.add_argument('--spares', type=int, default=0,
-                        help='the number of spares to add per color/brick (bricklink), just in case of loosing some bricks')
-    parser.add_argument('--width', type=int, default=48,
-                        help='the width of the mosaic (default is 48)')
-    parser.add_argument('--height', type=int, default=48,
-                        help='the height of the mosaic (default is 48)')
+    parser = argparse.ArgumentParser(
+        description="brick-mosaic: 'Mosaicify' an image using brick colors and export bill of material"
+    )
+    parser.add_argument(
+        "--image_file",
+        "-i",
+        type=str,
+        help="the image to process",
+    )
+    parser.add_argument(
+        "--color_file",
+        type=str,
+        default="",
+        help="the csv-file defining the brick-colors to be used (if not given, colors.csv at script "
+        "location is attempted)",
+    )
+    parser.add_argument(
+        "--output_directory",
+        "-o",
+        type=str,
+        default=".",
+        help="the directory the output image and BOM is written to (default is current working dir)",
+    )
+    parser.add_argument(
+        "--spares",
+        type=int,
+        default=0,
+        help="the number of spares to add per color/brick (bricklink), just in case of loosing some bricks",
+    )
+    parser.add_argument(
+        "--size",
+        type=str,
+        default="48x48",
+        help="the size of the mosaic (default is 48x48 bricks)",
+    )
+    parser.add_argument(
+        "--grid_cell",
+        type=str,
+        default="8x8",
+        help=f"the size of a helper grid cell (default is 8x8 bricks, '{NO_GRID}' removes the grid)",
+    )
+    parser.add_argument(
+        "--no_preview",
+        dest="no_preview",
+        action="store_true",
+        default=False,
+        help="indicates whether to skip immediately showing the images",
+    )
     # Retrieve arguments
     args = parser.parse_args()
     # Use default color definition location, if not given
-    default_color_file = os.path.join(os.path.dirname(os.path.realpath(sys.argv[0])), 'colors.csv')
-    if args.color_file == '':
+    default_color_file = os.path.join(
+        os.path.dirname(os.path.realpath(sys.argv[0])), "colors.csv"
+    )
+    if args.color_file == "":
         if not os.path.exists(default_color_file):
-            print('No color definitions found, exiting ...')
+            print("No color definitions found, exiting ...")
             sys.exit(-1)
         args.color_file = default_color_file
     # Quick check for image file presence
     if not os.path.exists(args.image_file):
-        print(f'Cannot find image file at {args.image_file}, exiting ...')
+        print(f"Cannot find image file at {args.image_file}, exiting ...")
         sys.exit(-2)
+    # Get image size
+    try:
+        width, height = [int(a) for a in args.size.split("x")]
+        args.width = width
+        args.height = height
+    except Exception:
+        print(
+            f"Cannot parse --size argument. Got {args.size}, but wanted something like 48x48"
+        )
+        sys.exit(-3)
+    # Get helper grid cell size
+    if args.grid_cell != NO_GRID:
+        try:
+            width, height = [int(a) for a in args.grid_cell.split("x")]
+            args.grid_cell_width = width
+            args.grid_cell_height = height
+        except Exception:
+            print(
+                f"Cannot parse --grid_cell argument. Got {args.grid_cell}, but wanted something like 8x8"
+            )
+            sys.exit(-4)
+    # Get helper grid size
     # Create output directory, if it does not exist
     os.makedirs(args.output_directory, exist_ok=True)
     return args
 
 
-def read_colors(color_file: str) -> []:
+# ===> Functionality
+
+
+def read_colors(color_file: str) -> List[BrickColor]:
     """
     Reads the color file and returns the color definitions.
     Expected CSV-format (with header, integer RGB): red,green,blue;color-name,bricklink-color-id,bricklink-brick-type
@@ -78,11 +151,17 @@ def read_colors(color_file: str) -> []:
     """
     colors_read = []
     with open(color_file) as color_def_file:
-        csv_reader = csv.reader(color_def_file, delimiter=';')
+        csv_reader = csv.reader(color_def_file, delimiter=";")
         next(csv_reader)
         for row in csv_reader:
-            colors_read.append(BrickColor(tuple([int(i) for i in row[0].split(sep=',')]),
-                                          row[1].strip(), row[2].strip(), row[3].strip()))
+            colors_read.append(
+                BrickColor(
+                    tuple([int(i) for i in row[0].split(sep=",")]),
+                    row[1].strip(),
+                    row[2].strip(),
+                    row[3].strip(),
+                )
+            )
     return colors_read
 
 
@@ -125,6 +204,19 @@ def replace_with_brick_colors(img, brick_colors):
     return stats
 
 
+def add_grid(img, pixels, spacing):
+    line_frac = 0.002
+    line_width = int(round(min(line_frac * img.shape[0], line_frac * img.shape[1])))
+    for i in range(pixels[0] + 1):
+        if i % spacing[0] == 0:
+            x = int(round(float(i) / pixels[0] * img.shape[0]))
+            cv2.line(img, (x, 0), (x, img.shape[0]), (0, 0, 0), line_width)
+    for i in range(pixels[1] + 1):
+        if i % spacing[1] == 0:
+            y = int(round(float(i) / pixels[1] * img.shape[1]))
+            cv2.line(img, (0, y), (img.shape[0], y), (0, 0, 0), line_width)
+
+
 def write_xml(filename, stats, spares_per_lot=5):
     """
     Writes the necessary colored bricks collected in stats to a bricklink xml file.
@@ -146,53 +238,71 @@ def write_xml(filename, stats, spares_per_lot=5):
 
 
 # ===> Main start
-# Get arguments
-args = init_and_get_arguments()
 
-# Read color info - find colors here: https://www.bricklink.com/catalogColors.asp
-colors = read_colors(args.color_file)
 
-# Input image
-image_input = cv2.imread(args.image_file)
+def main():
+    # Get arguments
+    args = init_and_get_arguments()
 
-# Get input size
-height, width = image_input.shape[:2]
-# Desired "pixelated" size
-w, h = (args.width, args.height)
-# Desired output size
-w_out, h_out = (1000, 1000)
+    # Read color info - find colors here: https://www.bricklink.com/catalogColors.asp
+    colors = read_colors(args.color_file)
 
-# Resize input to "pixelated" size
-image_pixelated = cv2.resize(image_input, (w, h), interpolation=cv2.INTER_LINEAR)
-image_bricks = image_pixelated.copy()
+    # Input image
+    image_input = cv2.imread(args.image_file)
 
-# Replace with brick colors
-statistics = replace_with_brick_colors(image_bricks, colors)
+    # Desired "pixelated" size
+    w, h = (args.width, args.height)
+    # Desired output size
+    w_out, h_out = (1000, 1000)
 
-# Initialize output image
-image_output = cv2.resize(image_bricks, (w_out, h_out), interpolation=cv2.INTER_NEAREST)
+    # Resize input to "pixelated" size
+    image_pixelated = cv2.resize(image_input, (w, h), interpolation=cv2.INTER_LINEAR)
+    image_bricks = image_pixelated.copy()
 
-# Show some statistics
-print(f"Colors ({len(statistics)} colors, {sum([i.count for i in statistics.values()])} tiles):")
-for item in sorted(statistics.items(), key=lambda x: -x[1].count):
-    print(f"{item[0].colorName}: {item[1].count}")
+    # Replace with brick colors
+    statistics = replace_with_brick_colors(image_bricks, colors)
 
-# Output bricklink xml
-write_xml(os.path.join(args.output_directory, 'bricklink.xml'), statistics)
+    # Initialize output image
+    image_output = cv2.resize(
+        image_bricks, (w_out, h_out), interpolation=cv2.INTER_NEAREST
+    )
 
-# Prepare pixelated image for analysis (just resize it)
-image_input = cv2.resize(image_input, (w_out, h_out), interpolation=cv2.INTER_NEAREST)
-image_pixelated = cv2.resize(image_pixelated, (w_out, h_out), interpolation=cv2.INTER_NEAREST)
+    # Add helper grid
+    grid_spacing = args.grid_cell_width, args.grid_cell_height
+    if args.grid_cell != NO_GRID:
+        add_grid(image_output, (w, h), grid_spacing)
 
-# Write images
-cv2.imwrite(os.path.join(args.output_directory, '1.input.jpg'), image_input)
-cv2.imwrite(os.path.join(args.output_directory, '2.pixelated.jpg'), image_pixelated)
-cv2.imwrite(os.path.join(args.output_directory, '3.output.jpg'), image_output)
+    # Show some statistics
+    print(
+        f"Colors ({len(statistics)} colors, {sum([i.count for i in statistics.values()])} tiles):"
+    )
+    for item in sorted(statistics.items(), key=lambda x: -x[1].count):
+        print(f"{item[0].colorName}: {item[1].count}")
 
-# Show images
-cv2.imshow('Input', image_input)
-cv2.imshow('Pixelated', image_pixelated)
-cv2.imshow('Output', image_output)
+    # Output bricklink xml
+    write_xml(os.path.join(args.output_directory, "bricklink.xml"), statistics)
 
-# Wait for user to quit
-cv2.waitKey(0)
+    # Prepare pixelated image for analysis (just resize it)
+    image_input = cv2.resize(
+        image_input, (w_out, h_out), interpolation=cv2.INTER_NEAREST
+    )
+    image_pixelated = cv2.resize(
+        image_pixelated, (w_out, h_out), interpolation=cv2.INTER_NEAREST
+    )
+
+    # Write images
+    cv2.imwrite(os.path.join(args.output_directory, "1.input.jpg"), image_input)
+    cv2.imwrite(os.path.join(args.output_directory, "2.pixelated.jpg"), image_pixelated)
+    cv2.imwrite(os.path.join(args.output_directory, "3.output.jpg"), image_output)
+
+    # Show images
+    if not args.no_preview:
+        cv2.imshow("Input", image_input)
+        cv2.imshow("Pixelated", image_pixelated)
+        cv2.imshow("Output", image_output)
+        # Wait for user to quit
+        cv2.waitKey(0)
+
+
+if __name__ == "__main__":
+    main()
