@@ -33,14 +33,37 @@ following alternatives (if I forgot an alternative here, let me know):
 
 ## Quickstart
 
-### Prerequisites
+The following should get you started.
+
+### Dependencies
+
+Main dependencies are:
 
 - Python (I used python 3.8)
-  - opencv-python (the version I used is defined in _requirements.txt_)
+  - `opencv-python` (the version I used is defined in _requirements.txt_)
+
+If you run into problems missing `libGL.so`, install the following:
+
+```bash
+sudo apt update
+sudo apt install libgl1-mesa-glx
+```
+
+### Installation
+
+Install via PyPi
+
+```bash
+pip install brickmos --upgrade
+```
 
 ### Process an image
 
 Convert an image by invoking the script as follows:
+
+`brickmos data/iron-man-portrait.jpg --output_directory="temp"`
+
+Or alternatively clone this repo and run it directly:
 
 `python run.py data/iron-man-portrait.jpg --output_directory="temp"`
 
@@ -56,7 +79,7 @@ outcome (and price ;) ).
 1. Choose ___Upload BrickLink XML format___
 1. Copy & paste (ctrl-a, ctrl-c, ctrl-v) the XML output of the tool into the window
 1. _Proceed to verify items_ and add all to a wishlist (please double-check the
-   items, before ordering ;) )
+   items, before ordering)
 
 ## Further information
 
