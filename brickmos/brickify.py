@@ -1,3 +1,4 @@
+from . import defaults
 import argparse
 import csv
 import cv2
@@ -55,6 +56,7 @@ def init_and_get_arguments():
     parser.add_argument(
         "--image_file",
         "-i",
+        required=True,
         type=str,
         help="the image to process",
     )
@@ -100,14 +102,9 @@ def init_and_get_arguments():
     # Retrieve arguments
     args = parser.parse_args()
     # Use default color definition location, if not given
-    default_color_file = os.path.join(
-        os.path.dirname(os.path.realpath(sys.argv[0])), "colors.csv"
-    )
-    if args.color_file == "":
-        if not os.path.exists(default_color_file):
-            print("No color definitions found, exiting ...")
-            sys.exit(-1)
-        args.color_file = default_color_file
+    if args.color_file != "" and not os.path.exists(args.color_file):
+        print(f"No color definition file found at {args.color_file}, exiting ...")
+        sys.exit(-1)
     # Quick check for image file presence
     if not os.path.exists(args.image_file):
         print(f"Cannot find image file at {args.image_file}, exiting ...")
@@ -142,26 +139,25 @@ def init_and_get_arguments():
 # ===> Functionality
 
 
-def read_colors(color_file: str) -> List[BrickColor]:
+def read_colors(color_csv: str) -> List[BrickColor]:
     """
-    Reads the color file and returns the color definitions.
+    Reads the color CSV and returns the color definitions.
     Expected CSV-format (with header, integer RGB): red,green,blue;color-name,bricklink-color-id,bricklink-brick-type
-    :param color_file: The path to the color file.
+    :param color_csv: The CSV content as a string.
     :return: All color definitions read from the file.
     """
     colors_read = []
-    with open(color_file) as color_def_file:
-        csv_reader = csv.reader(color_def_file, delimiter=";")
-        next(csv_reader)
-        for row in csv_reader:
-            colors_read.append(
-                BrickColor(
-                    tuple([int(i) for i in row[0].split(sep=",")]),
-                    row[1].strip(),
-                    row[2].strip(),
-                    row[3].strip(),
-                )
+    csv_reader = csv.reader(color_csv.splitlines(), delimiter=";")
+    next(csv_reader)
+    for row in csv_reader:
+        colors_read.append(
+            BrickColor(
+                tuple([int(i) for i in row[0].split(sep=",")]),
+                row[1].strip(),
+                row[2].strip(),
+                row[3].strip(),
             )
+        )
     return colors_read
 
 
@@ -245,7 +241,13 @@ def main():
     args = init_and_get_arguments()
 
     # Read color info - find colors here: https://www.bricklink.com/catalogColors.asp
-    colors = read_colors(args.color_file)
+    color_info = ""
+    if args.color_file == "":
+        color_info = defaults.get_default_colors()
+    else:
+        with open(args.color_file, "r") as f:
+            color_info = f.read()
+    colors = read_colors(color_info)
 
     # Input image
     image_input = cv2.imread(args.image_file)

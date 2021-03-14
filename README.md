@@ -1,4 +1,6 @@
-# brick-mosaic
+# brickmos
+
+**brick**-**mos**aic
 
 This is a simple tool for converting images to Lego mosaics such that their
 parts can be ordered quite easily from bricklink (https://www.bricklink.com/).

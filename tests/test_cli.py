@@ -39,7 +39,7 @@ def hash_file(path):
 def test_main():
 
     # Check for update argument
-    parser = argparse.ArgumentParser(description="brick-mosaic golden file tests")
+    parser = argparse.ArgumentParser(description="brickmos golden file tests")
     parser.add_argument(
         "--update",
         dest="update",
@@ -62,7 +62,7 @@ def test_main():
         os.remove(os.path.join(output_dir, f))
     script_path = str(
         pathlib.Path(__file__)
-        .parent.joinpath("../mosaic/brickify.py")
+        .parent.joinpath("../brickmos/brickify.py")
         .resolve(strict=True)
     )
     base = [sys.executable, script_path]
