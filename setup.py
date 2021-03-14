@@ -13,7 +13,7 @@ setuptools.setup(
     description="brickmos - A simple brick mosaic generator",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    version="0.0.2",
+    version="0.0.3",
     author="Marius Merschformann",
     author_email="marius.merschformann@gmail.com",
     url="https://github.com/merschformann/brickmos",
