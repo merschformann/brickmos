@@ -2,7 +2,7 @@
 
 **brick**-**mos**aic
 
-[![pypi_version](https://img.shields.io/pypi/v/brickmos?label=pypi)](https://pypi.org/project/brickmos)![build badge](https://github.com/merschformann/brickmos/workflows/build/badge.svg)
+[![pypi_version](https://img.shields.io/pypi/v/brickmos?label=pypi)](https://pypi.org/project/brickmos)[![build](https://github.com/merschformann/brickmos/actions/workflows/build.yml/badge.svg)](https://github.com/merschformann/brickmos/actions/workflows/build.yml)
 
 This is a simple tool for converting images to Lego mosaics such that their
 parts can be ordered quite easily from bricklink (https://www.bricklink.com/).
