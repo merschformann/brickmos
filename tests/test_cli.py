@@ -37,7 +37,6 @@ def hash_file(path):
 
 # Test CLI
 def test_main():
-
     # Check for update argument
     parser = argparse.ArgumentParser(description="brickmos golden file tests")
     parser.add_argument(
@@ -58,8 +57,7 @@ def test_main():
     # Prepare
     os.chdir(base_dir)
     os.makedirs(output_dir, exist_ok=True)
-    old_files = [f for f in os.listdir(output_dir)]
-    for f in old_files:
+    for f in os.listdir(output_dir):
         os.remove(os.path.join(output_dir, f))
     base_args = [sys.executable, script_path]
     CliTest = collections.namedtuple(
@@ -95,7 +93,6 @@ def test_main():
 
     # Run all test cases
     for test in tests:
-
         # Assemble command and arguments
         cmd = [*base_args, *test.args]
         cmd.extend(
@@ -123,9 +120,9 @@ def test_main():
                 file.write(output)
         else:
             expected = ""
-            with open(test.golden_log, "r") as file:
+            with open(test.golden_log) as file:
                 expected = file.read()
-            assert output == expected
+            assert output == expected, f"Expected:\n{expected}\nGot:\n{output}"
 
         # Compare hash of pixelated file
         pix_hash = hash_file(os.path.join(output_dir, "2.pixelated.jpg"))
@@ -134,9 +131,9 @@ def test_main():
                 file.write(pix_hash)
         else:
             expected = ""
-            with open(test.golden_pixelated, "r") as file:
+            with open(test.golden_pixelated) as file:
                 expected = file.read()
-            assert pix_hash == expected
+            assert pix_hash == expected, f"Expected: {expected}, Got: {pix_hash}"
 
         # Compare hash of output file
         out_hash = hash_file(os.path.join(output_dir, "3.output.jpg"))
@@ -145,22 +142,22 @@ def test_main():
                 file.write(out_hash)
         else:
             expected = ""
-            with open(test.golden_output, "r") as file:
+            with open(test.golden_output) as file:
                 expected = file.read()
-            assert out_hash == expected
+            assert out_hash == expected, f"Expected: {expected}, Got: {out_hash}"
 
         # Compare bricklink export
         bricklink = ""
-        with open(os.path.join(output_dir, "bricklink.xml"), "r") as f:
+        with open(os.path.join(output_dir, "bricklink.xml")) as f:
             bricklink = f.read()
         if args.update:
             with open(test.golden_bricklink, "w") as file:
                 file.write(bricklink)
         else:
             expected = ""
-            with open(test.golden_bricklink, "r") as file:
+            with open(test.golden_bricklink) as file:
                 expected = file.read()
-            assert bricklink == expected
+            assert bricklink == expected, f"Expected:\n{expected}\nGot:\n{bricklink}"
 
 
 if __name__ == "__main__":

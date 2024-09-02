@@ -1,0 +1,57 @@
+[build-system]
+build-backend = "hatchling.build"
+requires = ["hatchling >= 1.13.0"]
+
+[project]
+authors = [
+    { email = "marius.merschformann@gmail.com", name = "Marius Merschformann" }
+]
+maintainers = [
+    { email = "marius.merschformann@gmail.com", name = "Marius Merschformann" }
+]
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+]
+dependencies = [
+    "opencv-python>=4.8.1.78",
+]
+description = "brickmos is a humble Lego mosaic generator."
+dynamic = [
+    "version",
+]
+keywords = [
+    "lego",
+    "mosaic",
+    "bricklink",
+]
+license = { file = "LICENSE" }
+name = "brickmos"
+readme = "README.md"
+requires-python = ">=3.9"
+
+[project.urls]
+Homepage = "https://github.com/merschformann/brickmos"
+Repository = "https://github.com/merschformann/brickmos"
+
+[project.scripts]
+brickmos = "brickmos.brickify:main"
+
+[tool.ruff]
+target-version = "py312"
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "C",  # flake8-comprehensions
+    "B",  # flake8-bugbear
+    "UP",  # pyupgrade
+]
+line-length = 120
+[tool.ruff.lint.mccabe]
+max-complexity = 15
+
+[tool.hatch.version]
+path = "brickmos/__about__.py"

@@ -1,13 +1,13 @@
-from . import defaults
 import argparse
 import csv
-import cv2
 import math
 import os
 import sys
-from typing import Tuple, List
-import xml.etree.cElementTree as xmlET
+import xml.etree.ElementTree as xmlET
 
+import cv2
+
+from . import defaults
 
 # ===> Constants
 
@@ -111,24 +111,20 @@ def init_and_get_arguments():
         sys.exit(-2)
     # Get image size
     try:
-        width, height = [int(a) for a in args.size.split("x")]
+        width, height = (int(a) for a in args.size.split("x"))
         args.width = width
         args.height = height
     except Exception:
-        print(
-            f"Cannot parse --size argument. Got {args.size}, but wanted something like 48x48"
-        )
+        print(f"Cannot parse --size argument. Got {args.size}, but wanted something like 48x48")
         sys.exit(-3)
     # Get helper grid cell size
     if args.grid_cell != NO_GRID:
         try:
-            width, height = [int(a) for a in args.grid_cell.split("x")]
+            width, height = (int(a) for a in args.grid_cell.split("x"))
             args.grid_cell_width = width
             args.grid_cell_height = height
         except Exception:
-            print(
-                f"Cannot parse --grid_cell argument. Got {args.grid_cell}, but wanted something like 8x8"
-            )
+            print(f"Cannot parse --grid_cell argument. Got {args.grid_cell}, but wanted something like 8x8")
             sys.exit(-4)
     # Get helper grid size
     # Create output directory, if it does not exist
@@ -139,7 +135,7 @@ def init_and_get_arguments():
 # ===> Functionality
 
 
-def read_colors(color_csv: str) -> List[BrickColor]:
+def read_colors(color_csv: str) -> list[BrickColor]:
     """
     Reads the color CSV and returns the color definitions.
     Expected CSV-format (with header, integer RGB): red,green,blue;color-name,bricklink-color-id,bricklink-brick-type
@@ -161,7 +157,7 @@ def read_colors(color_csv: str) -> List[BrickColor]:
     return colors_read
 
 
-def closest_color(rgb: Tuple[int, int, int], color_range: list) -> BrickColor:
+def closest_color(rgb: tuple[int, int, int], color_range: list) -> BrickColor:
     """
     Returns the color from the range which is closest to the given one.
     :param rgb: The given color to fine the closest one for.
@@ -170,10 +166,12 @@ def closest_color(rgb: Tuple[int, int, int], color_range: list) -> BrickColor:
     """
     # Get rgb values of color while adhering to cv2 BGR representation
     r, g, b = rgb
+    r, g, b = float(r), float(g), float(b)
     # Assess euclidean distance of color to all brick colors given
     color_diffs = []
     for color in color_range:
         cr, cg, cb = color.rgb
+        cr, cg, cb = float(cr), float(cg), float(cb)
         color_diff = math.sqrt(abs(r - cr) ** 2 + abs(g - cg) ** 2 + abs(b - cb) ** 2)
         color_diffs.append((color_diff, color))
     # Get color closest to the given one and update its stats
@@ -245,7 +243,7 @@ def main():
     if args.color_file == "":
         color_info = defaults.get_default_colors()
     else:
-        with open(args.color_file, "r") as f:
+        with open(args.color_file) as f:
             color_info = f.read()
     colors = read_colors(color_info)
 
@@ -265,9 +263,7 @@ def main():
     statistics = replace_with_brick_colors(image_bricks, colors)
 
     # Initialize output image
-    image_output = cv2.resize(
-        image_bricks, (w_out, h_out), interpolation=cv2.INTER_NEAREST
-    )
+    image_output = cv2.resize(image_bricks, (w_out, h_out), interpolation=cv2.INTER_NEAREST)
 
     # Add helper grid
     grid_spacing = args.grid_cell_width, args.grid_cell_height
@@ -275,9 +271,7 @@ def main():
         add_grid(image_output, (w, h), grid_spacing)
 
     # Show some statistics
-    print(
-        f"Colors ({len(statistics)} colors, {sum([i.count for i in statistics.values()])} tiles):"
-    )
+    print(f"Colors ({len(statistics)} colors, {sum([i.count for i in statistics.values()])} tiles):")
     for item in sorted(statistics.items(), key=lambda x: -x[1].count):
         print(f"{item[0].colorName}: {item[1].count}")
 
@@ -285,12 +279,8 @@ def main():
     write_xml(os.path.join(args.output_directory, "bricklink.xml"), statistics)
 
     # Prepare pixelated image for analysis (just resize it)
-    image_input = cv2.resize(
-        image_input, (w_out, h_out), interpolation=cv2.INTER_NEAREST
-    )
-    image_pixelated = cv2.resize(
-        image_pixelated, (w_out, h_out), interpolation=cv2.INTER_NEAREST
-    )
+    image_input = cv2.resize(image_input, (w_out, h_out), interpolation=cv2.INTER_NEAREST)
+    image_pixelated = cv2.resize(image_pixelated, (w_out, h_out), interpolation=cv2.INTER_NEAREST)
 
     # Write images
     cv2.imwrite(os.path.join(args.output_directory, "1.input.jpg"), image_input)
