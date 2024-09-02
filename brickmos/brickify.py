@@ -166,10 +166,12 @@ def closest_color(rgb: tuple[int, int, int], color_range: list) -> BrickColor:
     """
     # Get rgb values of color while adhering to cv2 BGR representation
     r, g, b = rgb
+    r, g, b = float(r), float(g), float(b)
     # Assess euclidean distance of color to all brick colors given
     color_diffs = []
     for color in color_range:
         cr, cg, cb = color.rgb
+        cr, cg, cb = float(cr), float(cg), float(cb)
         color_diff = math.sqrt(abs(r - cr) ** 2 + abs(g - cg) ** 2 + abs(b - cb) ** 2)
         color_diffs.append((color_diff, color))
     # Get color closest to the given one and update its stats
