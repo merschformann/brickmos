@@ -63,11 +63,11 @@ pip install brickmos --upgrade
 
 Convert an image by invoking the script as follows:
 
-`brickmos data/iron-man-portrait.jpg --output_directory="temp"`
+`brickmos --image_file data/iron-man-portrait.jpg --output_directory="temp"`
 
 Or alternatively clone this repo and run it directly:
 
-`python run.py data/iron-man-portrait.jpg --output_directory="temp"`
+`python run.py --image_file data/iron-man-portrait.jpg --output_directory="temp"`
 
 Repeat the process while modifying the original image (change colors in areas
 not working well, change colors overall, etc.) and limiting / extending the
